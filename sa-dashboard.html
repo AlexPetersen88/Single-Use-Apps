@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>SA Daily Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green:    #2d6a2d;
+    --green-lt: #3d8f3d;
+    --gold:     #c9a227;
+    --gold-lt:  #e8be45;
+    --soil:     #5c3d2e;
+    --cream:    #f5f0e8;
+    --white:    #ffffff;
+    --gray-1:   #1a1a1a;
+    --gray-2:   #2e2e2e;
+    --gray-3:   #555;
+    --gray-4:   #999;
+    --gray-5:   #ddd;
+    --card-bg:  #ffffff;
+    --page-bg:  #f0ece2;
+    --radius:   10px;
+    --shadow:   0 2px 12px rgba(0,0,0,0.09);
+    --shadow-lg:0 6px 28px rgba(0,0,0,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--page-bg);
+    color: var(--gray-1);
+    min-height: 100vh;
+    padding-bottom: 32px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--green);
+    color: var(--white);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 16px rgba(0,0,0,0.25);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--gold);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--green);
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+
+  .header-titles h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+
+  .header-titles p {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.72;
+    letter-spacing: 0.3px;
+    margin-top: 1px;
+  }
+
+  .header-date {
+    text-align: right;
+  }
+
+  .header-date .date-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--gold-lt);
+  }
+
+  .header-date .date-sub {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+
+  /* ── TABS ── */
+  .tab-bar {
+    background: var(--soil);
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 100%;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    border: none;
+    background: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tab-btn.active {
+    color: var(--gold-lt);
+    border-bottom-color: var(--gold-lt);
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px 12px;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    color: var(--gray-2);
+    text-transform: uppercase;
+  }
+
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--gray-4);
+    margin-top: 1px;
+  }
+
+  /* ── PRIORITIES / TASKS ── */
+  .task-list { list-style: none; }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-5);
+  }
+  .task-item:last-child { border-bottom: none; }
+
+  .task-check {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gray-5);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .task-check.done {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .task-check.done::after {
+    content: '✓';
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .task-body { flex: 1; }
+
+  .task-text {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--gray-1);
+  }
+
+  .task-text.done-text {
+    text-decoration: line-through;
+    color: var(--gray-4);
+  }
+
+  .task-meta {
+    font-size: 11px;
+    color: var(--gray-4);
+    margin-top: 2px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .tag-high   { background: #ffeded; color: #c0392b; }
+  .tag-med    { background: #fff5e0; color: #b07800; }
+  .tag-low    { background: #eef7ee; color: var(--green); }
+  .tag-call   { background: #e8f0fe; color: #1a73e8; }
+  .tag-visit  { background: #f3e8ff; color: #7b2ff7; }
+  .tag-admin  { background: #f0f0f0; color: #555; }
+
+  /* ── WEATHER STRIP ── */
+  .weather-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .weather-cell {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 12px 8px;
+    text-align: center;
+  }
+
+  .weather-day {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .weather-icon { font-size: 24px; margin: 4px 0; }
+
+  .weather-temp {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--gray-1);
+  }
+
+  .weather-desc {
+    font-size: 10px;
+    color: var(--gray-4);
+    margin-top: 2px;
+  }
+
+  /* ── GDU METER ── */
+  .gdu-bar-wrap {
+    margin-top: 8px;
+  }
+
+  .gdu-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .gdu-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-3);
+    width: 90px;
+    flex-shrink: 0;
+  }
+
+  .gdu-track {
+    flex: 1;
+    height: 8px;
+    background: var(--gray-5);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .gdu-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--green-lt));
+    border-radius: 4px;
+    transition: width 0.8s ease;
+  }
+
+  .gdu-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--green);
+    width: 55px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── INSIGHT CARDS ── */
+  .insight-card {
+    background: linear-gradient(135deg, #f9f4e8, #fff);
+    border: 1px solid #e8dfc8;
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+
+  .insight-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--soil);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 5px;
+  }
+
+  .insight-body {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--gray-2);
+  }
+
+  /* ── ACCOUNT LIST ── */
+  .account-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-5);
+  }
+  .account-item:last-child { border-bottom: none; }
+
+  .account-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .account-info { flex: 1; }
+
+  .account-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--gray-1);
+  }
+
+  .account-detail {
+    font-size: 11px;
+    color: var(--gray-4);
+    margin-top: 2px;
+  }
+
+  .account-acres {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--green);
+    text-align: right;
+  }
+
+  .account-acres-label {
+    font-size: 10px;
+    color: var(--gray-4);
+  }
+
+  /* ── STAT GRID ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .stat-cell {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 14px 12px;
+  }
+
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--green);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--gray-4);
+    margin-top: 3px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .stat-delta {
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .stat-delta.up   { color: var(--green-lt); }
+  .stat-delta.down { color: #c0392b; }
+
+  /* ── ALERT BANNER ── */
+  .alert-banner {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  .alert-body { flex: 1; }
+
+  .alert-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #7a5800;
+    margin-bottom: 3px;
+  }
+
+  .alert-text {
+    font-size: 12.5px;
+    color: #5a4000;
+    line-height: 1.45;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray-4);
+  }
+
+  .empty-state .empty-icon {
+    font-size: 44px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .empty-state h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--gray-3);
+    margin-bottom: 6px;
+  }
+
+  .empty-state p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* ── NOTE FIELD ── */
+  .note-area {
+    width: 100%;
+    min-height: 80px;
+    border: 1.5px solid var(--gray-5);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    color: var(--gray-1);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #fafaf8;
+  }
+
+  .note-area:focus { border-color: var(--green); }
+
+  .save-btn {
+    margin-top: 8px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .save-btn:active { background: var(--green-lt); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray-4);
+    margin: 16px 0 8px;
+  }
+
+  /* ── SEPARATOR ── */
+  .sep {
+    height: 1px;
+    background: var(--gray-5);
+    margin: 12px 0;
+  }
+
+  /* ── PILL LABEL ── */
+  .pill {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* ── UPDATE TIMESTAMP ── */
+  .update-ts {
+    text-align: center;
+    font-size: 11px;
+    color: var(--gray-4);
+    margin-top: 20px;
+    padding-bottom: 8px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .weather-strip { grid-template-columns: repeat(4, 1fr); gap: 5px; }
+    .weather-cell  { padding: 8px 4px; }
+    .weather-icon  { font-size: 20px; }
+    .weather-temp  { font-size: 15px; }
+    .stat-grid     { gap: 8px; }
+    .stat-value    { font-size: 28px; }
+    .content       { padding: 12px 8px; }
+  }
+
+  /* ── ANIMATION ── */
+  .tab-panel.active .card,
+  .tab-panel.active .stat-cell,
+  .tab-panel.active .weather-cell,
+  .tab-panel.active .alert-banner {
+    animation: fadeUp 0.22s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="logo-mark">SA</div>
+      <div class="header-titles">
+        <h1>Pioneer Field Daily</h1>
+        <p>Sales Agronomy Dashboard</p>
+      </div>
+    </div>
+    <div class="header-date">
+      <div class="date-label" id="hdr-date">—</div>
+      <div class="date-sub" id="hdr-day">Loading…</div>
+    </div>
+  </div>
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab-btn active" data-tab="today">Today</button>
+    <button class="tab-btn" data-tab="field">Field Intel</button>
+    <button class="tab-btn" data-tab="accounts">Accounts</button>
+    <button class="tab-btn" data-tab="market">Market</button>
+    <button class="tab-btn" data-tab="notes">My Notes</button>
+  </div>
+</header>
+
+<div class="content">
+
+  <!-- ═══════════════════════════════ TODAY TAB ═══════════════════════════════ -->
+  <div class="tab-panel active" id="tab-today">
+
+    <!-- ALERTS -->
+    <!-- SA_ALERTS_START -->
+    <div id="alerts-container">
+      <div class="alert-banner">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-body">
+          <div class="alert-title">Frost Risk</div>
+          <div class="alert-text">Sub-freezing temps possible overnight Thu–Fri. Remind growers with emerged corn to monitor early growth stage damage.</div>
+        </div>
+      </div>
+    </div>
+    <!-- SA_ALERTS_END -->
+
+    <div class="section-label">Today's Priorities</div>
+
+    <!-- TASKS -->
+    <!-- SA_TASKS_START -->
+    <div class="card">
+      <ul class="task-list" id="task-list">
+        <li class="task-item">
+          <div class="task-check" onclick="toggleTask(this)"></div>
+          <div class="task-body">
+            <div class="task-text"><span class="tag tag-high">High</span> Follow up with Johnson Farms on flex contract — deadline today</div>
+            <div class="task-meta"><span class="tag tag-call">Call</span> 9:00 AM · Dan Johnson</div>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-check" onclick="toggleTask(this)"></div>
+          <div class="task-body">
+            <div class="task-text"><span class="tag tag-high">High</span> Deliver P4587AM agronomic review to Hansen seed co</div>
+            <div class="task-meta"><span class="tag tag-visit">Visit</span> 11:00 AM · 847 County Rd 14</div>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-check" onclick="toggleTask(this)"></div>
+          <div class="task-body">
+            <div class="task-text"><span class="tag tag-med">Med</span> Update Q2 pipeline in Salesforce by EOD</div>
+            <div class="task-meta"><span class="tag tag-admin">Admin</span> Deadline: 5:00 PM</div>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-check" onclick="toggleTask(this)"></div>
+          <div class="task-body">
+            <div class="task-text"><span class="tag tag-med">Med</span> Send soybean positioning email to Tier 1 grower list</div>
+            <div class="task-meta"><span class="tag tag-call">Email</span> Use new P22T41E talking points</div>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-check" onclick="toggleTask(this)"></div>
+          <div class="task-body">
+            <div class="task-text"><span class="tag tag-low">Low</span> Review plot trial data from Cerro Gordo location</div>
+            <div class="task-meta"><span class="tag tag-admin">Admin</span> 30 min</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!-- SA_TASKS_END -->
+
+    <div class="section-label">Weather</div>
+
+    <!-- WEATHER -->
+    <!-- SA_WEATHER_START -->
+    <div class="weather-strip" id="weather-strip">
+      <div class="weather-cell">
+        <div class="weather-day">Today</div>
+        <div class="weather-icon">🌤️</div>
+        <div class="weather-temp">68°</div>
+        <div class="weather-desc">Partly cloudy</div>
+      </div>
+      <div class="weather-cell">
+        <div class="weather-day">Wed</div>
+        <div class="weather-icon">🌧️</div>
+        <div class="weather-temp">59°</div>
+        <div class="weather-desc">Rain, 0.6"</div>
+      </div>
+      <div class="weather-cell">
+        <div class="weather-day">Thu</div>
+        <div class="weather-icon">⛈️</div>
+        <div class="weather-temp">54°</div>
+        <div class="weather-desc">T-storm risk</div>
+      </div>
+      <div class="weather-cell">
+        <div class="weather-day">Fri</div>
+        <div class="weather-icon">❄️</div>
+        <div class="weather-temp">38°</div>
+        <div class="weather-desc">Frost risk</div>
+      </div>
+    </div>
+    <!-- SA_WEATHER_END -->
+
+    <div class="section-label">Quick Stats</div>
+
+    <!-- STATS -->
+    <!-- SA_STATS_START -->
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <div class="stat-value">2,847</div>
+        <div class="stat-label">Corn Units Sold</div>
+        <div class="stat-delta up">▲ 12% vs last year</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">931</div>
+        <div class="stat-label">Soybean Units</div>
+        <div class="stat-delta up">▲ 8% vs last year</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">74%</div>
+        <div class="stat-label">Quota Pacing</div>
+        <div class="stat-delta up">▲ On track</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">18</div>
+        <div class="stat-label">Open Opportunities</div>
+        <div class="stat-delta down">▼ 3 stalled</div>
+      </div>
+    </div>
+    <!-- SA_STATS_END -->
+
+    <div class="update-ts" id="last-updated">Last updated: —</div>
+  </div>
+
+  <!-- ═══════════════════════════════ FIELD INTEL TAB ═══════════════════════════════ -->
+  <div class="tab-panel" id="tab-field">
+
+    <div class="section-label">Growing Degree Units (GDU)</div>
+
+    <!-- SA_GDU_START -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#eef7ee;">🌱</div>
+        <div>
+          <div class="card-title">GDU Accumulation</div>
+          <div class="card-subtitle">Base 50°F · Season to date</div>
+        </div>
+      </div>
+      <div class="gdu-bar-wrap" id="gdu-bars">
+        <div class="gdu-row">
+          <div class="gdu-label">Your Territory</div>
+          <div class="gdu-track"><div class="gdu-fill" style="width:38%"></div></div>
+          <div class="gdu-val">312 GDU</div>
+        </div>
+        <div class="gdu-row">
+          <div class="gdu-label">5-yr Average</div>
+          <div class="gdu-track"><div class="gdu-fill" style="width:31%;background:linear-gradient(90deg,#999,#bbb)"></div></div>
+          <div class="gdu-val" style="color:#888">256 GDU</div>
+        </div>
+        <div class="gdu-row">
+          <div class="gdu-label">Planting Stage</div>
+          <div class="gdu-track"><div class="gdu-fill" style="width:100%;background:linear-gradient(90deg,#c9a227,#e8be45)"></div></div>
+          <div class="gdu-val" style="color:var(--gold)">VE → V1</div>
+        </div>
+      </div>
+    </div>
+    <!-- SA_GDU_END -->
+
+    <div class="section-label">Agronomic Insights</div>
+
+    <!-- SA_INSIGHTS_START -->
+    <div id="insights-container">
+      <div class="insight-card">
+        <div class="insight-head">🌽 Corn Emergence Watch</div>
+        <div class="insight-body">Growers who planted April 22–26 are seeing uneven emergence in heavier soils. Likely cause: soil crusting following last week's 1.2" rain + warmth. Recommend emergence walk and stand count before V2.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-head">🫘 Soybean Positioning Window</div>
+        <div class="insight-body">Optimal planting window opens May 5. Growers still holding on soybean decisions are a priority contact this week. Lead with P22T41E (SCN + white mold dual protection) in your territory's eastern acres.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-head">🪲 Pest Pressure Alert</div>
+        <div class="insight-body">Black cutworm adult flight counts elevated in 3 traps (Worth, Mitchell, Floyd counties). Degree day accumulation tracking toward economic threshold for VT/R1 treated fields. Flag accounts in these counties for follow-up.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-head">💧 Soil Moisture Update</div>
+        <div class="insight-body">Subsoil profile at 90–110% of field capacity across most of territory following April precipitation. No irrigation concerns. Anaerobic conditions possible in low spots if additional rain arrives Wed–Thu.</div>
+      </div>
+    </div>
+    <!-- SA_INSIGHTS_END -->
+
+  </div>
+
+  <!-- ═══════════════════════════════ ACCOUNTS TAB ═══════════════════════════════ -->
+  <div class="tab-panel" id="tab-accounts">
+
+    <div class="section-label">Priority Accounts This Week</div>
+
+    <!-- SA_ACCOUNTS_START -->
+    <div class="card" id="accounts-card">
+      <ul class="task-list">
+        <li class="account-item">
+          <div class="account-avatar">DJ</div>
+          <div class="account-info">
+            <div class="account-name">Dan Johnson — Johnson Farms</div>
+            <div class="account-detail">📍 Mitchell, IA &nbsp;·&nbsp; 🌽 Corn-heavy &nbsp;·&nbsp; <span class="tag tag-high">Contract Due</span></div>
+          </div>
+          <div>
+            <div class="account-acres">4,200</div>
+            <div class="account-acres-label">acres</div>
+          </div>
+        </li>
+        <li class="account-item">
+          <div class="account-avatar" style="background:var(--soil)">HS</div>
+          <div class="account-info">
+            <div class="account-name">Hansen Seed Co.</div>
+            <div class="account-detail">📍 Mason City, IA &nbsp;·&nbsp; 🫘 Soy focus &nbsp;·&nbsp; <span class="tag tag-visit">Visit Today</span></div>
+          </div>
+          <div>
+            <div class="account-acres">2,800</div>
+            <div class="account-acres-label">acres</div>
+          </div>
+        </li>
+        <li class="account-item">
+          <div class="account-avatar" style="background:#1a73e8">LG</div>
+          <div class="account-info">
+            <div class="account-name">Larson Grain & Supply</div>
+            <div class="account-detail">📍 Osage, IA &nbsp;·&nbsp; Mixed &nbsp;·&nbsp; <span class="tag tag-med">Retention Risk</span></div>
+          </div>
+          <div>
+            <div class="account-acres">3,500</div>
+            <div class="account-acres-label">acres</div>
+          </div>
+        </li>
+        <li class="account-item">
+          <div class="account-avatar" style="background:#7b2ff7">TR</div>
+          <div class="account-info">
+            <div class="account-name">Thompson Row Crops</div>
+            <div class="account-detail">📍 Northwood, IA &nbsp;·&nbsp; 🌽 Corn &nbsp;·&nbsp; <span class="tag tag-low">New Prospect</span></div>
+          </div>
+          <div>
+            <div class="account-acres">1,900</div>
+            <div class="account-acres-label">acres</div>
+          </div>
+        </li>
+        <li class="account-item">
+          <div class="account-avatar" style="background:#b04020">PR</div>
+          <div class="account-info">
+            <div class="account-name">Peterson Ridge LLC</div>
+            <div class="account-detail">📍 Britt, IA &nbsp;·&nbsp; Mixed &nbsp;·&nbsp; <span class="tag tag-call">Call Needed</span></div>
+          </div>
+          <div>
+            <div class="account-acres">2,100</div>
+            <div class="account-acres-label">acres</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!-- SA_ACCOUNTS_END -->
+
+  </div>
+
+  <!-- ═══════════════════════════════ MARKET TAB ═══════════════════════════════ -->
+  <div class="tab-panel" id="tab-market">
+
+    <div class="section-label">Commodity Prices</div>
+
+    <!-- SA_MARKET_START -->
+    <div class="stat-grid" id="commodity-grid">
+      <div class="stat-cell">
+        <div class="stat-value" style="font-size:26px">$4.52</div>
+        <div class="stat-label">Corn · Dec Futures</div>
+        <div class="stat-delta down">▼ −0.08 today</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value" style="font-size:26px">$11.87</div>
+        <div class="stat-label">Soybeans · Nov Futures</div>
+        <div class="stat-delta up">▲ +0.12 today</div>
+      </div>
+    </div>
+
+    <div class="section-label">Talking Points</div>
+
+    <div id="talking-points-container">
+      <div class="insight-card">
+        <div class="insight-head">💰 Price Risk Management</div>
+        <div class="insight-body">Dec corn at $4.52 is near mid-season average. Growers who haven't made 25–30% new crop sales should consider doing so. Position Pioneer's yield advantage as the hedge — better yield = more bushels at any price.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-head">📉 Input Cost Narrative</div>
+        <div class="insight-body">Nitrogen spot prices have softened 8% since March. Reinforces grower confidence in locked-in fertility programs. Pivot to ROI conversation: seed is the highest-leverage input, not fertilizer.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-head">🏆 Competitive Position</div>
+        <div class="insight-body">Competitor X running aggressive early pay discounts. Counter: emphasize Pioneer's agronomic support, local trial data, and on-farm support you personally provide. Price isn't the only reason they buy.</div>
+      </div>
+    </div>
+    <!-- SA_MARKET_END -->
+
+  </div>
+
+  <!-- ═══════════════════════════════ NOTES TAB ═══════════════════════════════ -->
+  <div class="tab-panel" id="tab-notes">
+
+    <div class="section-label">Quick Field Note</div>
+
+    <div class="card">
+      <textarea class="note-area" id="note-text" placeholder="Jot something down — field observation, account note, follow-up reminder…"></textarea>
+      <button class="save-btn" onclick="saveNote()">Save Note</button>
+    </div>
+
+    <div class="section-label">Saved Notes</div>
+    <div id="saved-notes-list"></div>
+
+  </div>
+
+</div><!-- /content -->
+
+<script>
+// ── DATE HEADER ──
+(function() {
+  const now   = new Date();
+  const days  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months= ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('hdr-date').textContent =
+    months[now.getMonth()] + ' ' + now.getDate();
+  document.getElementById('hdr-day').textContent  =
+    days[now.getDay()] + ' · ' + now.getFullYear();
+  document.getElementById('last-updated').textContent =
+    'Last updated: ' + now.toLocaleDateString('en-US',{month:'short',day:'numeric'}) +
+    ' at ' + now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+})();
+
+// ── TABS ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const tab = this.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+  });
+});
+
+// ── TASK TOGGLE ──
+function toggleTask(el) {
+  el.classList.toggle('done');
+  const textEl = el.nextElementSibling.querySelector('.task-text');
+  textEl.classList.toggle('done-text');
+}
+
+// ── NOTES (localStorage) ──
+function loadNotes() {
+  const notes = JSON.parse(localStorage.getItem('sa_notes') || '[]');
+  const container = document.getElementById('saved-notes-list');
+  if (!notes.length) {
+    container.innerHTML = '<div class="empty-state"><span class="empty-icon">📝</span><h3>No notes yet</h3><p>Use the field above to jot a quick note.</p></div>';
+    return;
+  }
+  container.innerHTML = notes.map((n,i) =>
+    `<div class="card" style="position:relative">
+      <div style="font-size:10px;color:var(--gray-4);margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">${n.date}</div>
+      <div style="font-size:13px;line-height:1.55;white-space:pre-wrap">${escHtml(n.text)}</div>
+      <button onclick="deleteNote(${i})" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--gray-4);font-size:16px;cursor:pointer;-webkit-tap-highlight-color:transparent">✕</button>
+    </div>`
+  ).join('');
+}
+
+function saveNote() {
+  const txt = document.getElementById('note-text').value.trim();
+  if (!txt) return;
+  const notes = JSON.parse(localStorage.getItem('sa_notes') || '[]');
+  const now   = new Date();
+  notes.unshift({ text: txt, date: now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}) });
+  localStorage.setItem('sa_notes', JSON.stringify(notes));
+  document.getElementById('note-text').value = '';
+  loadNotes();
+}
+
+function deleteNote(i) {
+  const notes = JSON.parse(localStorage.getItem('sa_notes') || '[]');
+  notes.splice(i, 1);
+  localStorage.setItem('sa_notes', JSON.stringify(notes));
+  loadNotes();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+loadNotes();
+</script>
+
+</body>
+</html>
